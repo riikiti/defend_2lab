@@ -6,56 +6,100 @@
 using namespace std;
 
 
-//dodelat file
-int modulo(int a, int b) {
-    return a >= 0 ? a % b : (b - abs(a % b)) % b;
+class Vigenere {
+private:
+    int  abcSize = 128;
+    string  abc = "";
+    string key = "";
+public:
+    Vigenere() {
+        // заполнили базовый алфавит
+        for (int i = 128; i < 256; i++)
+            abc += (char)i;
+    }
+
+    //dodelat file
+    int modulo(int a, int b) {
+        return a >= 0 ? a % b : (b - abs(a % b)) % b;
+    }
+
+    string setKey(string Tkey) {
+        if (key.length() < 5) {
+            key = "арбуз";
+        }
+        else {
+            key = Tkey;
+        }
+        return key;
+    }
+
+    string getKey() {
+        return key;
+    }
+
+    string encryptText(string text) {
+        int len = text.length();
+        int key_len = key.length();
+
+        string e_text;
+        for (int i = 0; i < len; i++)
+            e_text += ((text[i] + key[i % key_len]) % abc.length());
+        return e_text;
+    }
+
+    string decryptText(string text) {
+        int len = text.length();
+        int key_len = key.length();
+
+        string d_text;
+        for (int i = 0; i < len; i++)
+            d_text += modulo(text[i] - key[i % key_len], abc.length());
+        return d_text;
+    }
+
+};
+
+template <typename T>
+void file(string fileRead, string fileWrite, T code) {
+    ifstream read(fileRead);
+    string k = "", msg = "";
+    while (getline(read, k))
+        msg += k;
+    read.close();
+
+    ofstream write(fileWrite);
+    if (fileWrite == "encrypt.txt")
+        write << code.encryptText(msg);
+    else
+        write << code.decryptText(msg);
+    write.close();
 }
 
-string encryptText(string text, string key) {
-
-    int a = 0, k = 0, abcSize = 256;
-    string decAbc = "", abc = "";
-    // заполнили базовый алфавит
-    for (int i = 0; i < 256; i++)
-        abc += (char)i;
-
-    int len = text.length();
-    int key_len = key.length();
-
-    string e_text;
-    for (int i = 0; i < len; i++)
-        e_text += ((text[i] + key[i % key_len])% abc.length());
-    return e_text;
-}
-
-string decryptText(string text, string key) {
-    int a = 0, k = 0, abcSize = 256;
-    string decAbc = "", abc = "";
-    // заполнили базовый алфавит
-    for (int i = 0; i < 256; i++)
-        abc += (char)i;
 
 
-    int len = text.length();
-    int key_len = key.length();
-    string d_text;
-    for (int i = 0; i < len; i++)
-        d_text += modulo(text[i] - key[i % key_len], abc.length());
-    return d_text;
-}
+
+
 
 int main(int argc, char** argv) {
     SetConsoleOutputCP(1251);
     SetConsoleCP(1251);
-    string text = " ЎўЈ¤Ґ¦§Ё©Є«¬­®Ї°±Ііґµ¶";
-    string key = "арбуз";
+    string text = "arbuz2fs";
+    string key = "privet";
+    Vigenere vigenere;
+    cout << "Введите текст" << endl;
+    cin >> text;
 
-    string encrypted = encryptText(text, key);
-    string decrypted = decryptText(encrypted, key);
+    cout << "Введите ключ" << endl;
+    cin >> key;
 
-    cout << text << std::endl;
-    cout << encrypted << std::endl;
-    cout << decrypted << std::endl;
+  
+    vigenere.setKey(key);
+    key = vigenere.getKey();
 
-    return 0;
+    cout << text << endl;
+    file<Vigenere>("decrypt.txt", "encrypt.txt", vigenere);
+    cout << vigenere.encryptText(text) << endl;
+    file<Vigenere>("encrypt.txt", "decrypt.txt", vigenere);
+    cout << vigenere.decryptText(vigenere.encryptText(text)) << endl;
+  
 }
