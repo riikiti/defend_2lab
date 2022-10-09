@@ -6,9 +6,27 @@
 using namespace std;
 
 
-
+//dodelat file
 int modulo(int a, int b) {
     return a >= 0 ? a % b : (b - abs(a % b)) % b;
+}
+
+
+
+template <typename T>
+void file(string fileRead, string fileWrite, T code) {
+    ifstream read(fileRead);
+    string k = "", msg = "";
+    while (getline(read, k))
+        msg += k;
+    read.close();
+
+    ofstream write(fileWrite);
+    if (fileWrite == "encrypt.txt")
+        write << code.encrypt(msg);
+    else
+        write << code.decrypt(msg);
+    write.close();
 }
 
 string encryptText(string text, string key) {
