@@ -8,11 +8,17 @@ using namespace std;
 
 class Vigenere {
 private:
-    int  abcSize = 128;
+    int  abcSize = 256;
     string  abc = "";
     string key = "";
 public:
     Vigenere() {
+        ifstream keysFile("keys.txt");
+        if (keysFile.is_open())
+            keysFile >> key;
+        else
+            cout << " Файл с ключами не найден!\n";
+        keysFile.close();
         // заполнили базовый алфавит
         for (int i = 0; i < 256; i++)
             abc += (char)i;
@@ -83,23 +89,18 @@ void file(string fileRead, string fileWrite, T code) {
 int main(int argc, char** argv) {
     SetConsoleOutputCP(1251);
     SetConsoleCP(1251);
-    string text = "arbuz2fs";
-    string key = "privet";
+    string text = "azbuka";
+    string key = "АРБУЗЫ";
     Vigenere vigenere;
-    cout << "Введите текст" << endl;
-    cin >> text;
-
-    cout << "Введите ключ" << endl;
-    cin >> key;
-
   
     vigenere.setKey(key);
     key = vigenere.getKey();
 
     cout << text << endl;
-    file<Vigenere>("decrypt.txt", "encrypt.txt", vigenere);
-    cout << vigenere.encryptText(text) << endl;
+
     file<Vigenere>("encrypt.txt", "decrypt.txt", vigenere);
+    cout << vigenere.encryptText(text) << endl;
+    file<Vigenere>("decrypt.txt", "encrypt.txt", vigenere);
     cout << vigenere.decryptText(vigenere.encryptText(text)) << endl;
   
 }
